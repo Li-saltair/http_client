@@ -1,6 +1,6 @@
 {
   "name": "http_client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "用于客户端发起请求的集中处理程序",
   "main": "index.js",
   "scripts": {
