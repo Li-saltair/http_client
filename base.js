@@ -1,7 +1,7 @@
 //import api from './api'
 //import axios from 'axios'
-const api = require("./api")
-const axios = require("axios")
+const api = require('./api')
+const axios = require('axios')
 const httpClient = axios
 //基础方法
 
@@ -11,32 +11,32 @@ const postHeaders = {
   }
 }
 const fileHeaders = {
-    header:{
-        'Content-Type':'multipart/form-data'
-    }
+  header: {
+    'Content-Type': 'multipart/form-data'
+  }
 }
 const putHeaders = {
-    header:{
-        'Content-Type':'application/json'
-    }
+  header: {
+    'Content-Type': 'application/json'
+  }
 }
 const otherConfig = {
-  baseURL: api.baseUrl.mock, //配置使用的url即可
+  //不再在此处配置单独的baseURL，
   timeout: 6000,
   //cors
   withCredentials: false,
   validateStatus: function(status) {
     return (status >= 200 && status < 300) || status == 304 // default
-  },
+  }
   //配置cors的地址
-//   proxy: {
-//     host: '127.0.0.1',
-//     port: 9000,
-//     auth: {
-//       username: 'mikeymike',
-//       password: 'rapunz3l'
-//     }
-//   }
+  //   proxy: {
+  //     host: '127.0.0.1',
+  //     port: 9000,
+  //     auth: {
+  //       username: 'mikeymike',
+  //       password: 'rapunz3l'
+  //     }
+  //   }
 }
 
 //Interceptors
@@ -62,36 +62,43 @@ httpClient.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
-const client= {
-  request_get: function({ url, data = {} }) {
+const client = {
+  request_get: function({ serve, url, data = {},extension={} }) {
     return httpClient.get(url, {
+      baseURL: serve,
       params: data,
-      ...otherConfig
+      ...otherConfig,
+      ...extension
     })
   },
-  request_post: function({ url, data = {} }) {
+  request_post: function({ serve, url, data = {},extension={} }) {
     return httpClient.post(url, {
+      baseURL: serve,
       data,
       ...otherConfig,
-      ...postHeaders
+      ...postHeaders,
+      ...extension
     })
   },
-  request_put: function({ url, data = {} }) {
+  request_put: function({ serve, url, data = {},extension={} }) {
     return httpClient.put(url, {
+      baseURL: serve,
       data,
       ...otherConfig,
-      ...putHeaders
+      ...putHeaders,
+      ...extension
     })
   },
-  request_delete: function({ url }) {
-      return httpClient.delete(url)
+  request_delete: function({ serve, url,extension={} }) {
+    return httpClient.delete(url, { baseURL: serve,...extension })
   },
-  request_file: function({url,data={}}){
-    return httpClient.post(url,{
-        data,
-        ...otherConfig,
-        ...fileHeaders
+  request_file: function({ serve, url, data = {},extension={} }) {
+    return httpClient.post(url, {
+      baseURL: serve,
+      data,
+      ...otherConfig,
+      ...fileHeaders,
+      ...extension
     })
   }
   //拦截
@@ -107,4 +114,3 @@ const client= {
 //     return requestMap[method](url, option)
 //   }
 module.exports = client
-
